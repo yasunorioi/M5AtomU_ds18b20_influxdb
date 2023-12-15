@@ -2,6 +2,7 @@
 #include <M5Stack.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
+#include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
 
 // OneWire DS18S20, DS18B20, DS1822 Temperature Example
 //
@@ -12,8 +13,9 @@
  
 OneWire ds(25); // on pin 10 (a 4.7K resistor is necessary)
 
-char ssid[] = "SSID";     //  your network SSID (name) 
+/*char ssid[] = "SSID";     //  your network SSID (name) 
 char pass[] = "pass";    // your network password
+*/
 // the IP address of your InfluxDB host
 byte host[] = {192,168,1,23};
 
@@ -22,12 +24,17 @@ int port = 8089;
 WiFiUDP udp;
 
 void setup(void) {
-    Serial.begin(115200);
-    Serial.println("start");
-    WiFi.begin(ssid, pass);
-    while(WiFi.status() != WL_CONNECTED){
-      Serial.println(".");
-    delay(500);
+  Serial.begin(115200);
+  WiFi.mode(WIFI_STA);
+  WiFiManager wm;
+  bool res;
+  res=wm.autoConnect("M5Stick-C_CO2_Speaker","");
+  if(!res) {
+    delay(3000);
+    //ESP.restart();
+    delay(5000);
+  } else {
+    Serial.println(WiFi.localIP());
   }
 }
  
